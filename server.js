@@ -5,7 +5,13 @@
 const express = require('express')
 const app = express()
 const {ProfilController} = require('./controlleurs/ProfilController');
+const {FriendController} = require('./controlleurs/FriendController');
 const bodyParser = require('body-parser');
+
+const http = require('http');
+const socket = http.createServer();
+const io = require('socket.io').listen(socket);
+socket.listen(7000, "0.0.0.0");
 
 let API = "/api/1.0/";
 let responseBody = {
@@ -39,10 +45,11 @@ app.get('/', function (req, res) {
 /**
  * @api /user/creation
  */
-app.put(API+'user/create', (req, res) => {
-    ProfilController.create(req.body, r => {
+app.post(API+'user/create', (req, res) => {
+    ProfilController.create(req.body, (st,r) => {
         //res.cookie('lump', )
-        responseBody.success = true;
+        responseBody.success = st;
+        responseBody.result = r.result;
         res.send(responseBody);
     });
 });
@@ -52,18 +59,13 @@ app.put(API+'user/create', (req, res) => {
  */
 app.get(API+'user/login', (req, res) => {
     ProfilController.login(req.query, (s,r) => {
-        if(s) {
-            responseBody.success = true;
-            res.send(responseBody);
-        }
-        responseBody.success = false;
-        responseBody.result.message = r;
+        responseBody.success = s;
+        responseBody.result = r.result;
         res.send(responseBody);
     });
 });
 
 app.get(API+'user/search', (req, res) => {
-    console.log(req.body, req.params, req.query);
     ProfilController.search(req.query, (s,r) => {
         if(s) {
             responseBody.success = true;
@@ -71,11 +73,43 @@ app.get(API+'user/search', (req, res) => {
             res.send(responseBody);
         }
         responseBody.success = false;
-        responseBody.result.message = r;
+        responseBody.result = r.result;
         res.send(responseBody);
     });
 });
 
-app.listen(3000, function () {
+app.post(API+'friend/add/:user', (req, res) => {
+    FriendController.addFriend(req, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.get(API+'friend/list/', (req, res) => {
+    FriendController.getFriends(req.query, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'friend/delete/:id', (req, res) => {
+    FriendController.deleteFriend(req, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
+});
+
+io.on('connection', socket =>{
+    console.log('a user connected');
+    socket.on('connection name',function(user){
+        io.sockets.emit('new user', user.name + " has joined.");
+    })
+    socket.on('message', msg => {
+        var req = {};
+        req.params = "main/socket";
+        var response = factory.init(req);
+        console.log(msg);
+        socket.broadcast.send(response);
+    });
 });

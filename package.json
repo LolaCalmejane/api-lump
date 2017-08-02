@@ -7,7 +7,9 @@
     "atob": "^2.0.3",
     "crypto": "0.0.3",
     "express": "^4.15.3",
-    "mongodb": "^2.2.30"
+    "mongodb": "^2.2.30",
+    "should": "^11.2.1",
+    "socket.io": "^2.0.3"
   },
   "devDependencies": {},
   "scripts": {

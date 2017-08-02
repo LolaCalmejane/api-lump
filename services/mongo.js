@@ -85,6 +85,7 @@ var Mongo = (function () {
         var _this = this;
         var deferred = Q.defer();
         this.dbConnection.collection(collection).find(document).toArray(function (err, result) {
+
             _this.dbConnection.close();
             if (!err) {
                 deferred.resolve(result);
