@@ -8,6 +8,8 @@
     "crypto": "0.0.3",
     "express": "^4.15.3",
     "mongodb": "^2.2.30",
+    "node-libcurl": "^1.1.0",
+    "request": "^2.81.0",
     "should": "^11.2.1",
     "socket.io": "^2.0.3"
   },

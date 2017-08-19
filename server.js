@@ -6,6 +6,7 @@ const express = require('express')
 const app = express()
 const {ProfilController} = require('./controlleurs/ProfilController');
 const {FriendController} = require('./controlleurs/FriendController');
+const {MusicController} = require('./controlleurs/MusicController');
 const bodyParser = require('body-parser');
 
 const http = require('http');
@@ -92,6 +93,18 @@ app.get(API+'friend/list/', (req, res) => {
 
 app.post(API+'friend/delete/:id', (req, res) => {
     FriendController.deleteFriend(req, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.get(API+'music/search', (req, res) => {
+    MusicController.search(req.query, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'music/add/music', (req, res) => {
+    MusicController.addToMusics(req, (s,r) => {
         res.send(r);
     });
 });

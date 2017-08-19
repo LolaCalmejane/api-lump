@@ -30,7 +30,6 @@ class CheckUser {
     };
 
     checkDouble (login, email, callback) {
-
         Mongo.connect().then(q=>{
             q
                 .dbConnection

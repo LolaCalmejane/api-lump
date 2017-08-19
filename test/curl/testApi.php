@@ -55,7 +55,7 @@ $request = $curl->init('http://localhost:3000/api/1.0/friend/list/', 'GET',
     ->setOpt()
     ->execute();
 echo $request->result;
-*/
+
 $request = $curl->init('http://localhost:3000/api/1.0/friend/delete/5981bc0a95d2ef4fc943474e', 'POST',
     [
         'authorization' => base64_encode("thomas:a1z2e")
@@ -63,3 +63,24 @@ $request = $curl->init('http://localhost:3000/api/1.0/friend/delete/5981bc0a95d2
     ->setOpt()
     ->execute();
 echo $request->result;
+*/
+$request = $curl->init('http://localhost:3000/api/1.0/music/search', 'GET',
+    [
+        'authorization' => base64_encode("thomas:a1z2e"),
+        'search' => "rihanna diaman"
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+/*
+$request = $curl->init('http://localhost:3000/api/1.0/music/add/music', 'POST',
+    [
+        'authorization' => base64_encode("thomas:a1z2e"),
+        "videoId" => "lWA2pjMjpBs",
+        "title"=>"Rihanna - Diamonds",
+        "channel"=>"RihannaVEVO"
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+*/
