@@ -20,7 +20,8 @@ class YouTubeService {
                     final[i] = {
                         videoId : result.items[i].id.videoId,
                         title : result.items[i].snippet.title,
-                        channel : result.items[i].snippet.channelTitle
+                        channel : result.items[i].snippet.channelTitle,
+                        thumbnail : result.items[i].snippet.thumbnails.default.url
                     };
                 }
                 callback(true, {result : final});

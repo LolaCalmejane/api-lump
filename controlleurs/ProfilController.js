@@ -25,6 +25,7 @@ class ProfilController {
                 Mongo.connect().then((q) => {
                     Mongo.insert({login : params.login,
                         email: params.email, password : params.password }, 'user').then((r)  => {
+                        delete r.ops[0].password;
                         callback(true, {result : r.ops[0]});
                     });
                 });

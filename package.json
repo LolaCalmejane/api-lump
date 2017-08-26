@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "atob": "^2.0.3",
+    "body-parser": "^1.17.2",
     "crypto": "0.0.3",
     "express": "^4.15.3",
     "mongodb": "^2.2.30",

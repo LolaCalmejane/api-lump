@@ -7,6 +7,7 @@ const app = express()
 const {ProfilController} = require('./controlleurs/ProfilController');
 const {FriendController} = require('./controlleurs/FriendController');
 const {MusicController} = require('./controlleurs/MusicController');
+const {EventController} = require('./controlleurs/EventController');
 const bodyParser = require('body-parser');
 
 const http = require('http');
@@ -105,6 +106,55 @@ app.get(API+'music/search', (req, res) => {
 
 app.post(API+'music/add/music', (req, res) => {
     MusicController.addToMusics(req, (s,r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'music/playlist/create', (req, res) => {
+    MusicController.createPlaylist(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'music/playlist/add', (req, res) => {
+    MusicController.addToPlaylist(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.get(API+'music/playlist/list', (req, res) => {
+    MusicController.getPlaylistOfUser(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+
+app.post(API+'event/create', (req, res) => {
+    EventController.createEvent(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'event/add', (req, res) => {
+    EventController.addMusicToEvent(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'event/addParticipant', (req, res) => {
+    EventController.addParticipantToEvent(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.post(API+'event/addRanking', (req, res) => {
+    EventController.addRankingToMusic(req, (s, r) => {
+        res.send(r);
+    });
+});
+
+app.get(API+'event/list', (req, res) => {
+    EventController.getEventOfUser(req, (s, r) => {
         res.send(r);
     });
 });
