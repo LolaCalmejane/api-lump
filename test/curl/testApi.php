@@ -18,18 +18,18 @@ $request = $curl->init('http://localhost:3000/api/1.0/user/search', 'GET',
     ->setOpt()
     ->execute();
 echo $request->result;
-
+*/
 $request = $curl->init('http://localhost:3000/api/1.0/user/create', 'POST',
     [
-        'email' => 'dupont2.thomas70@gmail.com',
-        'login' => 'thomas3',
-        'password' => 'test'
+        'email' => 'dupontthomas70gmail.com',
+        'login' => 'dezdeaz',
+        'password' => 'deze'
     ])
     ->setOpt()
     ->execute();
 echo $request->result;
 
-
+/*
 
 $request = $curl->init('http://localhost:3000/api/1.0/friend/add/5981c8d13777dc60de73b26c', 'POST',
     [
@@ -167,7 +167,7 @@ $request = $curl->init('http://localhost:3000/api/1.0/event/addRanking', 'POST',
     ->setOpt()
     ->execute();
 echo $request->result;
-*/
+
 $request = $curl->init('http://178.62.126.60/app_dev.php/api/v1/user/register', 'POST',
     [
         'email' => "dupont.thomas70@gmail.com",
@@ -178,3 +178,5 @@ $request = $curl->init('http://178.62.126.60/app_dev.php/api/v1/user/register', 
     ->setOpt()
     ->execute();
 echo $request->result;
+
+*/

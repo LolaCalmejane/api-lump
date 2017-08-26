@@ -9,16 +9,23 @@ class ProfilController {
 
     constructor() {
     }
+    validateEmail (email) {
+        var re = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+        return re.test(email);
+    }
 
     create (params, callback) {
-        if(params.login == undefined) {
+        if(params.login == undefined || params.login == "") {
             callback(false, {result: "login manquant"});
         }
-        if(params.email == undefined) {
+        if(params.email == undefined || params.email == "") {
             callback(false, {result: "email manquant"});
         }
-        if(params.password == undefined) {
+        if(params.password == undefined || params.password == "") {
             callback(false, {result: "password manquant"});
+        }
+        if(!this.validateEmail(params.email)) {
+            callback(false, {result: "Mauvais format d'email"});
         }
         CheckUser.checkDouble(params.login, params.email, (st, r)=> {
             if(st) {
