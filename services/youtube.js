@@ -11,7 +11,7 @@ class YouTubeService {
     static searchVideo (search, type = "video", callback, limit = 6)
     {
         var url = 'https://www.googleapis.com/youtube/v3/search';
-        var params = '?videoEmbeddable=true&order=viewCount&part=snippet&maxResults='+limit+'&q='+search+'&key='+APIKEY+'&type='+type;
+        var params = '?videoEmbeddable=true&order=viewCount&part=snippet&videoCategoryId=10&maxResults='+limit+'&q='+search+'&key='+APIKEY+'&type='+type;
         request(url+params, function (err, res, body) {
             if (!err && res.statusCode == 200) {
                 var final = [];

@@ -25,6 +25,7 @@ class EventController {
                         adresse: params.body.adresse,
                         codePostal: params.body.codePostal,
                         duration: params.body.duration,
+                        photo: params.body.photo,
                         participants : [currentUser],
                         musics : []
                     }, 'events').then(r => {
