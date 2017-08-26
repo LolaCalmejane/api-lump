@@ -9,6 +9,7 @@ const {FriendController} = require('./controlleurs/FriendController');
 const {MusicController} = require('./controlleurs/MusicController');
 const {EventController} = require('./controlleurs/EventController');
 const bodyParser = require('body-parser');
+const CONFIG = require('./const');
 
 const http = require('http');
 const socket = http.createServer();
@@ -27,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8100');
+    res.setHeader('Access-Control-Allow-Origin', CONFIG.AUTHURL);
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     // Request headers you wish to allow
