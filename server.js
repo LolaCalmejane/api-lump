@@ -160,6 +160,12 @@ app.get(API+'event/list', (req, res) => {
     });
 });
 
+app.get(API+'event/disconnect', (req, res) => {
+    EventController.getEventForDisconnectedUser(req, (s, r) => {
+        res.send(r);
+    });
+});
+
 app.listen(3000, () => {
     console.log('Example app listening on port 3000!')
 });

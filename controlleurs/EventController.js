@@ -156,5 +156,15 @@ class EventController {
             }
         });
     }
+
+    getEventForDisconnectedUser(params, callback) {
+        Mongo.connect().then((q) => {
+            Mongo.find({_id : ObjectID.createFromHexString(params.body.id)}, 'events').then(r => {
+                callback(true, r);
+            }).catch(r => {
+                callback(false, r);
+            })
+        });
+    }
 }
 module.exports.EventController = new EventController();
