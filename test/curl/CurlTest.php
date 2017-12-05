@@ -1,10 +1,8 @@
 <?php
 
 /**
- * Created by PhpStorm.
- * User: thomas
- * Date: 25/07/2017
- * Time: 11:05
+ * @Author: thomas
+ * Created Date: 25/07/2017
  */
 class CurlTest
 {
@@ -33,6 +31,16 @@ class CurlTest
                 curl_setopt($this->curl, CURLOPT_PUT, true);
                 curl_setopt($this->curl, CURLOPT_HTTPHEADER, ['Content-Length: ' . strlen($encode)]);
                 curl_setopt($this->curl, CURLOPT_POSTFIELDS, $encode);
+                break;
+            case 'DELETE':
+                curl_setopt($this->curl, CURLOPT_URL, $url);
+                curl_setopt($this->curl, CURLOPT_POSTFIELDS, $encode);
+                curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'DELETE');
+                break;
+            case 'PATCH':
+                curl_setopt($this->curl, CURLOPT_URL, $url);
+                curl_setopt($this->curl, CURLOPT_POSTFIELDS, $encode);
+                curl_setopt($this->curl, CURLOPT_CUSTOMREQUEST, 'PATCH');
                 break;
         }
         return $this;

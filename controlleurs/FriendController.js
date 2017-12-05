@@ -15,6 +15,7 @@ class FriendController {
         var Id = ObjectID.createFromHexString(params.params.user);
         CheckUser.getUser(params.body.authorization, (st, r)=> {
             var currentUser = r.result._id;
+            var login = r.result.login;
             if(st) {
                 Mongo.connect().then((q) => {
                     q
@@ -25,8 +26,33 @@ class FriendController {
                             if(r==undefined) {
                                 callback(false, {result : "Cet utilisateur n'éxiste pas"});
                             } else {
-                                Mongo.update({_id : currentUser}, {$addToSet :{friend: r._id}},{}, 'user');
-                                Mongo.update({_id : r._id}, {$addToSet :{friend: currentUser}},{}, 'user');
+                                Mongo.update(
+                                    {_id : currentUser},
+                                    {
+                                        $addToSet :
+                                            {
+                                                friend: {
+                                                    id : r._id,
+                                                    name : r.login
+                                                }
+                                            }
+                                        },
+                                    {},
+                                    'user'
+                                );
+                                Mongo.update(
+                                    {_id : r._id},
+                                    {
+                                        $addToSet : {
+                                            friend: {
+                                                id : currentUser,
+                                                name : login
+                                            }
+                                        }
+                                    },
+                                    {},
+                                    'user'
+                                );
                                 callback(true, {result : "Ajout ok"});
                             }
                         });
@@ -64,6 +90,7 @@ class FriendController {
     deleteFriend (params, callback) {
         CheckUser.getUser(params.body.authorization, (st, r)=> {
             var currentUser = r.result._id;
+            var login = r.result.login;
             if (st) {
                 Mongo.connect().then((q) => {
                     q
@@ -74,8 +101,8 @@ class FriendController {
                             if(r==undefined) {
                                 callback(false, {result : "Cet utilisateur n'éxiste pas"});
                             } else {
-                                Mongo.update({_id: currentUser}, {$pull: {friend: r._id}}, {}, 'user');
-                                Mongo.update({_id: r._id}, {$pull: {friend: currentUser}}, {}, 'user');
+                                Mongo.update({_id: currentUser}, {$pull: {friend: { id: r._id, name : r.login}}}, {}, 'user');
+                                Mongo.update({_id: r._id}, {$pull: {friend: { id : currentUser, name : login}}}, {}, 'user');
                                 callback(true, {result : "Suppression ok"});
                             }
                     });

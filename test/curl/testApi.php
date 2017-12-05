@@ -18,7 +18,7 @@ $request = $curl->init('http://localhost:3000/api/1.0/user/search', 'GET',
     ->setOpt()
     ->execute();
 echo $request->result;
-*/
+
 $request = $curl->init('http://localhost:3000/api/1.0/user/create', 'POST',
     [
         'email' => 'dupontthomas70gmail.com',
@@ -29,9 +29,16 @@ $request = $curl->init('http://localhost:3000/api/1.0/user/create', 'POST',
     ->execute();
 echo $request->result;
 
-/*
 
 $request = $curl->init('http://localhost:3000/api/1.0/friend/add/5981c8d13777dc60de73b26c', 'POST',
+    [
+        'authorization' => base64_encode("thomas:a1z2e")
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+*/
+$request = $curl->init('http://localhost:3000/api/1.0/user/login/', 'GET',
     [
         'authorization' => base64_encode("thomas:a1z2e")
     ])
@@ -41,12 +48,20 @@ echo $request->result;
 
 $request = $curl->init('http://localhost:3000/api/1.0/user/login/', 'GET',
     [
-        'authorization' => base64_encode("thomas:a1z2e")
+        'authorization' => base64_encode("thomas:a1z2")
     ])
     ->setOpt()
     ->execute();
 echo $request->result;
 
+$request = $curl->init('http://localhost:3000/api/1.0/user/login/', 'GET',
+    [
+        'authorization' => base64_encode("thomas")
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+/*
 $request = $curl->init('http://localhost:3000/api/1.0/friend/list/', 'GET',
     [
         'authorization' => base64_encode("thomas:a1z2e"),
