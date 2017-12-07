@@ -11,12 +11,14 @@ class CheckUser {
 
     getUser (auth, callback) {
         var auth = atob(auth).split(':');
+
         Mongo.connect().then(q=>{
             q
                 .dbConnection
                 .collection('user')
                 .findOne({login : auth[0], password : auth[1]})
                 .then(r=>{
+
                     if(r == undefined) {
                         callback(false,{result : "cet utilisateur n'existe pas"});
                     } else {
