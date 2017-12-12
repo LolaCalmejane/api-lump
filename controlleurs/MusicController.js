@@ -65,7 +65,7 @@ class MusicController {
         });
     }
 
-    addToPlaylist (params, callback) {
+   addToPlaylist (params, callback) {
         CheckUser.getUser(params.body.authorization, (st, r)=> {
             var currentUser = r.result._id;
 
@@ -73,7 +73,13 @@ class MusicController {
                 Mongo.connect().then((q) => {
                     Mongo.update({userId : currentUser, _id : ObjectID.createFromHexString(params.body.id)}, {
                         $addToSet: {
-                            musics: params.body.music
+                            //musics: params.body.music
+                            musics : {
+                                videoId : params.body.videoId,
+                                title : params.body.title,
+                                channel : params.body.channel,
+                                thumbnails : params.body.thumbnails
+                            }                            
                         }
                     }, {}, 'playlist');
 
