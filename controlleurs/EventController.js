@@ -40,21 +40,17 @@ class EventController {
             }
         });
     }
+
+
     addParticipantToEvent (params, callback) {
-        CheckUser.getUser(params.body.authorization, (st, r)=> {
-            var currentUser = r.result._id;
-            if(st) {
-                Mongo.connect().then((q) => {
-                    Mongo.update({_id : ObjectID.createFromHexString(params.body.id), userId: currentUser},{
-                        $addToSet: {
-                            participants: ObjectID.createFromHexString(params.body.participant)
-                        }
-                    }, {}, 'events');
-                    callback(true, {result: "Ajout ok"});
-                });
-            } else {
-                callback(false, {result : "Vous n'êtes pas connecté"});
-            }
+        Mongo.connect().then((q) => {
+            Mongo.update({_id : ObjectID.createFromHexString(params.body.id), userId: params.currentUser},{
+                $addToSet: {
+                    //participants: ObjectID.createFromHexString(params.body.participant)
+                    participants: params.body.participant
+                }
+            }, {}, 'events');
+            callback(true, {result: "Ajout ok"});
         });
     }
 
@@ -159,7 +155,7 @@ class EventController {
 
     getEventForDisconnectedUser(params, callback) {
         Mongo.connect().then((q) => {
-            Mongo.find({_id : ObjectID.createFromHexString(params.body.id)}, 'events').then(r => {
+            Mongo.findOne({_id : ObjectID.createFromHexString(params.body.id || params.query.id)}, 'events').then(r => {
                 callback(true, r);
             }).catch(r => {
                 callback(false, r);

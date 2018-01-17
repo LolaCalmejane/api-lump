@@ -2,12 +2,15 @@
  * Created by thomas on 29/07/2017.
  */
 
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const {ProfilController} = require('./controlleurs/ProfilController');
 const {FriendController} = require('./controlleurs/FriendController');
 const {MusicController} = require('./controlleurs/MusicController');
 const {EventController} = require('./controlleurs/EventController');
+
+const {CheckUser} = require('./Model/CheckUser');
+
 const bodyParser = require('body-parser');
 const CONFIG = require('./const');
 
@@ -40,6 +43,22 @@ app.use(function (req, res, next) {
     next();
 });
 
+async function checkUser(authorization) {
+    let user;
+    try {
+        user = await new Promise((resolve, rej) => {
+            CheckUser.getUser(authorization, (st, r)=> {
+                if (st) {
+                    return resolve(r);
+                }
+                rej();
+            });
+        });
+    } catch (e) {
+        return false;
+    }
+    return user;
+}
 
 app.get('/', function (req, res) {
     res.send('Hello World!')
@@ -62,23 +81,32 @@ app.post(API+'user/create', (req, res) => {
  */
 app.get(API+'user/login', (req, res) => {
     ProfilController.login(req.query, (s,r) => {
-        responseBody.success = s;
-        responseBody.result = r.result;
-        res.send(responseBody);
+        res.send({success : s, result : r.result});
     });
 });
 
 app.get(API+'user/search', (req, res) => {
     ProfilController.search(req.query, (s,r) => {
         if(s) {
-            responseBody.success = true;
-            responseBody.result = r;
-            res.send(responseBody);
+            return res.send({success : s, result : r.result});
         }
-        responseBody.success = false;
-        responseBody.result = r.result;
-        res.send(responseBody);
+        res.send({success : s, result : r.result});
     });
+});
+
+/**
+ * param login : alias of the user
+ */
+app.get(API+'user/getprofil', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        ProfilController.getProfil(req, (s,r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
 app.post(API+'friend/add/:user', (req, res) => {
@@ -99,38 +127,100 @@ app.post(API+'friend/delete/:id', (req, res) => {
     });
 });
 
-app.get(API+'music/search', (req, res) => {
-    MusicController.search(req.query, (s,r) => {
-        res.send(r);
-    });
+app.get(API+'music/search', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.search(req.query, (s,r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
-app.post(API+'music/add/music', (req, res) => {
-    MusicController.addToMusics(req, (s,r) => {
-        res.send(r);
-    });
+app.post(API+'music/add/music', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.addToMusics(req, (s,r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
-app.post(API+'music/playlist/create', (req, res) => {
-    MusicController.createPlaylist(req, (s, r) => {
-        res.send(r);
-    });
+app.post(API+'music/playlist/create', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.createPlaylist(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
-app.post(API+'music/playlist/add', (req, res) => {
-    MusicController.addToPlaylist(req, (s, r) => {
-        res.send(r);
-    });
+app.post(API+'music/playlist/add', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.addToPlaylist(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
-app.get(API+'music/playlist/list', (req, res) => {
-    MusicController.getPlaylistOfUser(req, (s, r) => {
-        res.send(r);
-    });
+app.get(API+'music/playlist/list', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.getPlaylistOfUser(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
+});
+
+/**
+ * param id id of the playlist
+ */
+app.get(API+'music/playlist/single', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.getSinglePlaylist(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
 
-app.post(API+'event/create', (req, res) => {
+/**
+ *  @param type : music, playlist, playlistMusic
+ *  @param videoId : the youtube Id of the music
+ *  @param id : The id of the playlist
+ */
+app.post(API+'music/delete/:type', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        MusicController.deleteMusic(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
+});
+
+app.post(API+'event/create', async (req, res) => {
     EventController.createEvent(req, (s, r) => {
         res.send(r);
     });
@@ -142,10 +232,16 @@ app.post(API+'event/add', (req, res) => {
     });
 });
 
-app.post(API+'event/addParticipant', (req, res) => {
-    EventController.addParticipantToEvent(req, (s, r) => {
-        res.send(r);
-    });
+app.post(API+'event/addParticipant', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        EventController.addParticipantToEvent(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
 app.post(API+'event/addRanking', (req, res) => {
@@ -160,10 +256,28 @@ app.get(API+'event/list', (req, res) => {
     });
 });
 
+/**
+ * id event id
+ */
 app.get(API+'event/disconnect', (req, res) => {
     EventController.getEventForDisconnectedUser(req, (s, r) => {
         res.send(r);
     });
+});
+
+/**
+ * param id event id
+ */
+app.get(API+'event/single', async (req, res) => {
+    let user = await checkUser(req.body.authorization || req.query.authorization);
+    if (user) {
+        req.currentUser = user.result._id;
+        EventController.getEventForDisconnectedUser(req, (s, r) => {
+            res.send(r);
+        });
+        return;
+    }
+    res.send({result : "Vous n'êtes pas connecté"});
 });
 
 app.listen(3000, () => {
