@@ -3,57 +3,57 @@
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var MongoClient = require('mongodb').MongoClient, assert = require('assert'), Mongodb = require('mongodb'), Q = require("q");
+var MongoClient = require('mongodb').MongoClient;
 /**
  * Mongo Manager
  */
-var Mongo = (function () {
-    function Mongo() {
+class Mongo {
+    constructor () {
+        this.url = 'mongodb://localhost:27017/lump';
         this.dbConnection = null;
+        this.connect();
     }
     /**
      * Connection to DB
      * @param  {any}    callback callback function
      */
-    Mongo.prototype.connect = function () {
-        var _this = this;
-
-        var deferred = Q.defer();
-        // Use connect method to connect to the server
-        MongoClient.connect(Mongo.url, function (err, db) {
-            assert.equal(null, err);
-            //console.log("Connected successfully to server");
-            _this.dbConnection = db;
-            //promise the instance of the prototype
-            deferred.resolve(_this);
+    connect () {
+        return new Promise(resolve => {
+            if (this.dbConnection !== null) {
+                resolve(this);
+            } else {
+                // Use connect method to connect to the server
+                MongoClient.connect(this.url, (err, db) => {
+                    //console.log("Connected successfully to server");
+                    this.dbConnection = db;
+                    //promise the instance of the prototype
+                    return resolve(this);
+                });
+            }
         });
-        return deferred.promise;
     };
     /**
      * personnalize a mongoId
      * @return {string} the token
      */
-    Mongo.prototype.createId = function () {
+    createId () {
         return Math.random().toString(36).substr(2) + Math.random().toString(36).substr(2);
     };
     /**
      * insert document using Q
      * @param  {any}    document   the object to insert
      * @param  {string} collection the collection name
-     * @return {any}               the promise
+     * @return {Promise}               the promise
      */
-    Mongo.prototype.insert = function (document, collection) {
-        var _this = this;
-        var deferred = Q.defer();
-        this.dbConnection.collection(collection).insertOne(document, function (err, result) {
-            _this.dbConnection.close();
-            assert.equal(err, null);
-            if (err) {
-                deferred.reject(new Error(JSON.stringify(err)));
-            }
-            deferred.resolve(result);
+    insert (document, collection) {
+        return new Promise((res, rej) => {
+            this.dbConnection.collection(collection).insertOne(document, function (err, result) {
+                if (err) {
+                    return rej(new Error(JSON.stringify(err)));
+                }
+                res(result);
+            });
         });
-        return deferred.promise;
     };
     /**
      * remove a document, Q method
@@ -61,18 +61,16 @@ var Mongo = (function () {
      * @param {string} collection collection name
      * @param {any}    callback   the callback function
      */
-    Mongo.prototype.remove = function (document, collection) {
-        var _this = this;
-        var deferred = Q.defer();
-        this.dbConnection.collection(collection).deleteOne(document, function (err, result) {
-            _this.dbConnection.close();
-            console.log(result);
-            if (!err) {
-                deferred.resolve(result);
-            }
-            else {
-                deferred.reject(new Error(JSON.stringify(err)));
-            }
+    remove (document, collection) {
+        return new Promise((res, rej) => {
+            this.dbConnection.collection(collection).deleteOne(document, function (err, result) {
+                if (!err) {
+                    return res(result);
+                }
+                else {
+                    return rej(new Error(JSON.stringify(err)));
+                }
+            });
         });
     };
     /**
@@ -81,28 +79,43 @@ var Mongo = (function () {
      * @param {string} collection collection name
      * @return {any}               the promise
      */
-    Mongo.prototype.find = function (document, collection) {
-        var _this = this;
-        var deferred = Q.defer();
-        this.dbConnection.collection(collection).find(document).toArray(function (err, result) {
-
-            _this.dbConnection.close();
-            if (!err) {
-                deferred.resolve(result);
-            }
-            else {
-                deferred.reject(new Error(JSON.stringify(err)));
-            }
+    find (document, collection) {
+        return new Promise((res, rej) => {
+            this.dbConnection.collection(collection).find(document).toArray(function (err, result) {
+                if (!err) {
+                    return res(result);
+                }
+                else {
+                    return rej(new Error(JSON.stringify(err)));
+                }
+            });
         });
-        return deferred.promise;
     };
 
-    Mongo.prototype.update = function (match, update, options, collection)
+    /**
+     * find a single document
+     *
+     * @param {any}    document   matching parameter
+     * @param {string} collection collection name
+     * @returns {Promise} result : object of single document, err : object, Mongo error
+     */
+    findOne (document, collection)
     {
-        var _this = this;
+        return new Promise((res, rej) => {
+            this.dbConnection.collection(collection).findOne(document, (err, result) => {
+                if (err) {
+                    return rej(new Error(JSON.stringify(err)));
+                }
+                res(result);
+            });
+        });
+    }
+
+    update (match, update, options, collection)
+    {
         return this.dbConnection.collection(collection).update(match,update,options);
     }
-    return Mongo;
-}());
-Mongo.url = 'mongodb://localhost:27017/lump';
+
+}
+
 exports.Mongo = new Mongo();

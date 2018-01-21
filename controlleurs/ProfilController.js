@@ -66,6 +66,16 @@ class ProfilController {
 
         });
     };
+
+    getProfil (params, callback) {
+        Mongo.connect().then(q => {
+            Mongo.findOne({login : params.body.login || params.query.login}, 'user').then(r => {
+                callback(true, r);
+            }).catch(r => {
+                callback(false, r);
+            })
+        });
+    }
 };
 
 module.exports.ProfilController = new ProfilController();

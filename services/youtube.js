@@ -21,7 +21,8 @@ class YouTubeService {
                         videoId : result.items[i].id.videoId,
                         title : result.items[i].snippet.title,
                         channel : result.items[i].snippet.channelTitle,
-                        thumbnail : result.items[i].snippet.thumbnails.default.url
+                        thumbnail : result.items[i].snippet.thumbnails.default.url,
+                        duration : result.items[i].contentDetails.duration
                     };
                 }
                 callback(true, {result : final});

@@ -108,17 +108,29 @@ $request = $curl->init('http://localhost:3000/api/1.0/music/playlist/create', 'P
     ->setOpt()
     ->execute();
 echo $request->result;
+*/
 
 $request = $curl->init('http://localhost:3000/api/1.0/music/playlist/add', 'POST',
     [
         'authorization' => base64_encode("thomas:a1z2e"),
         'id' => "599842004afc9761ccc2a8c0",
-        'music' => 'lWA2pjMjpBs'
+        'music' => 'lWA2pjMjpBa'
     ])
     ->setOpt()
     ->execute();
 echo $request->result;
 
+$request = $curl->init('http://localhost:3000/api/1.0/music/delete/playlistMusic', 'POST',
+    [
+        'authorization' => base64_encode("thomas:a1z2e"),
+        'id' => "599842004afc9761ccc2a8c0",
+        'videoId' => 'lWA2pjMjpBe'
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+
+/*
 $request = $curl->init('http://localhost:3000/api/1.0/music/playlist/list', 'GET',
     [
         'authorization' => base64_encode("thomas:a1z2e")
@@ -195,3 +207,21 @@ $request = $curl->init('http://178.62.126.60/app_dev.php/api/v1/user/register', 
 echo $request->result;
 
 */
+
+$request = $curl->init('http://localhost:3000/api/1.0/user/getprofil', 'GET',
+    [
+        'authorization' => base64_encode("thomas2:test"),
+        'login' => "thomas"
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
+
+$request = $curl->init('http://localhost:3000/api/1.0/event/single', 'GET',
+    [
+        'authorization' => base64_encode("thomas2:test"),
+        'id' => "5998570fab4d4f77dcda8880"
+    ])
+    ->setOpt()
+    ->execute();
+echo $request->result;
